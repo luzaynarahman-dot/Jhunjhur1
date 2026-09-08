@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Form Modal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Montserrat", sans-serif;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(23, 30, 26, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .product-modal {
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            background: #fffdf8;
+            border-radius: 16px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 25px;
+            background: #173c35;
+            color: white;
+        }
+        
+        .modal-header h2 {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.25s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .modal-close:hover {
+            background: #e74c3c;
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 30px;
+            max-height: calc(90vh - 70px);
+            overflow-y: auto;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #173c35;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group label .required {
+            color: #e74c3c;
+            margin-left: 3px;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 11px 15px;
+            border: 1px solid #e8e0d6;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #2d2a25;
+            background: #fcf8f0;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            outline: none;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #a87525;
+            box-shadow: 0 0 0 3px rgba(168, 117, 37, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-group .helper-text {
+            display: block;
+            font-size: 0.55rem;
+            color: #999;
+            margin-top: 4px;
+        }
+        
+        /* Image Upload */
+        .image-upload-area {
+            border: 2px dashed #e8e0d6;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fcf8f0;
+        }
+        
+        .image-upload-area:hover,
+        .image-upload-area.dragover {
+            border-color: #a87525;
+            background: rgba(168, 117, 37, 0.03);
+        }
+        
+        .image-upload-area i {
+            font-size: 2.5rem;
+            color: #a87525;
+            margin-bottom: 10px;
+        }
+        
+        .image-upload-area p {
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .image-upload-area small {
+            font-size: 0.6rem;
+            color: #999;
+        }
+        
+        .image-preview {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .image-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            border: 2px solid #a87525;
+            object-fit: cover;
+        }
+        
+        .image-preview .remove-image {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            padding: 5px 15px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.25s ease;
+        }
+        
+        .image-preview .remove-image:hover {
+            background: #c0392b;
+        }
+        
+        /* Price Input */
+        .price-input-wrap {
+            position: relative;
+        }
+        
+        .price-input-wrap::before {
+            content: '৳';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #a87525;
+        }
+        
+        .price-input-wrap input {
+            padding-left: 35px;
+        }
+        
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            accent-color: #a87525;
+        }
+        
+        .checkbox-group label {
+            font-size: 0.7rem;
+            color: #2d2a25;
+            text-transform: none;
+            letter-spacing: 0;
+            margin: 0;
+        }
+        
+        /* Modal Footer */
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #e8e0d6;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: #fcf8f0;
+        }
+        
+        .btn-cancel {
+            padding: 10px 25px;
+            border-radius: 6px;
+            background: transparent;
+            color: #666;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            border: 1px solid #e8e0d6;
+            cursor: pointer;
+        }
+        
+        .btn-cancel:hover {
+            background: #e8e0d6;
+        }
+        
+        .btn-save {
+            padding: 10px 30px;
+            border-radius: 6px;
+            background: #173c35;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-save:hover {
+            background: #a87525;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(168, 117, 37, 0.3);
+        }
+        
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .modal-footer {
+                flex-direction: column;
+            }
+            
+            .btn-cancel,
+            .btn-save {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="modal-overlay" id="productFormModal" style="display: none;">
+    <div class="product-modal">
+        
+        <div class="modal-header">
+            <h2 id="modalTitle">Add New Product</h2>
+            <button class="modal-close" onclick="closeProductForm()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <form id="productForm" onsubmit="saveProduct(event)">
+                
+                <div class="form-grid">
+                    
+                    <!-- Product Image Upload -->
+                    <div class="form-group full-width">
+                        <label>Product Image <span class="required">*</span></label>
+                        <div class="image-upload-area" id="imageDropArea" onclick="document.getElementById('imageInput').click()">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <p>Click to upload or drag & drop</p>
+                            <small>PNG, JPG, WEBP (max 5MB)</small>
+                        </div>
+                        <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                        
+                        <div class="image-preview" id="imagePreview">
+                            <img id="previewImage" src="" alt="Preview">
+                            <br>
+                            <button type="button" class="remove-image" onclick="removeImage()">
+                                <i class="fa-solid fa-trash"></i> Remove Image
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Name -->
+                    <div class="form-group full-width">
+                        <label>Product Name <span class="required">*</span></label>
+                        <input type="text" id="productName" placeholder="e.g. Golden Jhumka" required>
+                    </div>
+                    
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label>Category <span class="required">*</span></label>
+                        <select id="productCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="bangles">Bangles</option>
+                            <option value="earrings">Earrings</option>
+                            <option value="pendants">Pendants</option>
+                            <option value="rings">Rings</option>
+                            <option value="others">Others (Tikli)</option>
+                            <option value="hair">Hair Accessories</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Price -->
+                    <div class="form-group">
+                        <label>Price (৳) <span class="required">*</span></label>
+                        <div class="price-input-wrap">
+                            <input type="number" id="productPrice" placeholder="450" min="1" step="1" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Stock -->
+                    <div class="form-group">
+                        <label>Stock Quantity <span class="required">*</span></label>
+                        <input type="number" id="productStock" placeholder="10" min="0" step="1" required>
+                    </div>
+                    
+                    <!-- Discount Price (Optional) -->
+                    <div class="form-group">
+                        <label>Discount Price (৳)</label>
+                        <div class="price-input-wrap">
+                            <input type="number" id="productDiscountPrice" placeholder="Optional" min="0" step="1">
+                        </div>
+                        <span class="helper-text">Leave empty if no discount</span>
+                    </div>
+                    
+                    <!-- Is Active -->
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="productIsActive" checked>
+                            <label for="productIsActive">Active (Visible on store)</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="form-group full-width">
+                        <label>Description</label>
+                        <textarea id="productDescription" placeholder="Describe the product details..."></textarea>
+                    </div>
+                    
+                </div>
+                
+            </form>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeProductForm()">Cancel</button>
+            <button class="btn-save" onclick="saveProduct(event)">
+                <i class="fa-solid fa-floppy-disk"></i> Save Product
+            </button>
+        </div>
+        
+    </div>
+</div>
+
+<!-- Placeholder image for products without image -->
+<div id="placeholderImage" style="display: none;">
+    <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="200" height="200" fill="#eee2d0"/>
+        <text x="100" y="100" text-anchor="middle" dy=".3em" font-family="Arial" font-size="24" fill="#a87525">No Image</text>
+        <text x="100" y="130" text-anchor="middle" dy=".3em" font-family="Arial" font-size="14" fill="#999">Placeholder</text>
+    </svg>
+</div>
+
+</body>
+</html>
+
