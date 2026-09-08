@@ -1,0 +1,679 @@
+<!-- account.html - User Dashboard -->
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account — Jhunjhur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600;700&family=Galada&family=Montserrat:wght@400;500;600&family=Noto+Serif+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <style>
+        .account-page {
+            padding: 130px 6% 80px;
+            background: var(--cream);
+        }
+        .account-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .account-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+        .account-welcome h1 {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 2.2rem;
+            color: var(--green);
+        }
+        .account-welcome p {
+            font-size: 0.8rem;
+            color: #70695d;
+        }
+        .account-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .account-actions button {
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+        .btn-logout {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+        }
+        .btn-logout:hover {
+            background: #e74c3c;
+            color: white;
+        }
+        .account-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+        .account-sidebar {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 25px;
+            border: 1px solid rgba(168, 117, 37, 0.08);
+            box-shadow: 0 4px 20px rgba(48, 38, 23, 0.04);
+            height: fit-content;
+        }
+        .account-sidebar .avatar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .account-sidebar .avatar img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--gold);
+        }
+        .account-sidebar .avatar h4 {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1.1rem;
+            color: var(--green);
+            margin-top: 8px;
+        }
+        .account-sidebar .avatar small {
+            font-size: 0.6rem;
+            color: var(--gold);
+        }
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .sidebar-menu button {
+            padding: 12px 16px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #70695d;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar-menu button i {
+            width: 20px;
+            color: var(--gold);
+        }
+        .sidebar-menu button:hover,
+        .sidebar-menu button.active {
+            background: rgba(168, 117, 37, 0.08);
+            color: var(--green);
+        }
+        .sidebar-menu button.active {
+            font-weight: 600;
+        }
+        .account-content {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 30px;
+            border: 1px solid rgba(168, 117, 37, 0.08);
+            box-shadow: 0 4px 20px rgba(48, 38, 23, 0.04);
+            min-height: 400px;
+        }
+        .account-tab {
+            display: none;
+        }
+        .account-tab.active {
+            display: block;
+        }
+        .account-tab h2 {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1.6rem;
+            color: var(--green);
+            margin-bottom: 15px;
+        }
+        .order-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            padding: 16px;
+            border: 1px solid rgba(168, 117, 37, 0.08);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        .order-item .order-info h4 {
+            font-size: 0.9rem;
+            color: var(--green);
+        }
+        .order-item .order-info small {
+            font-size: 0.65rem;
+            color: #70695d;
+        }
+        .order-status {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .order-status.pending { background: rgba(52,152,219,0.12); color: #2980b9; }
+        .order-status.processing { background: rgba(241,196,15,0.12); color: #f39c12; }
+        .order-status.delivered { background: rgba(39,174,96,0.12); color: #27ae60; }
+        .order-status.cancelled { background: rgba(231,76,60,0.12); color: #e74c3c; }
+        
+        .review-item {
+            padding: 16px;
+            border: 1px solid rgba(168, 117, 37, 0.08);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        .review-item .stars {
+            color: var(--gold);
+            font-size: 0.8rem;
+        }
+        .review-item p {
+            font-size: 0.8rem;
+            color: #6c665b;
+            margin-top: 5px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: rgba(168, 117, 37, 0.3);
+        }
+        .empty-state h3 {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1.3rem;
+            color: var(--green);
+            margin-top: 12px;
+        }
+        .empty-state p {
+            font-size: 0.8rem;
+            color: #70695d;
+        }
+        .profile-field {
+            margin-bottom: 18px;
+        }
+        .profile-field label {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--green);
+            margin-bottom: 4px;
+        }
+        .profile-field input,
+        .profile-field textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid rgba(168, 117, 37, 0.2);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--green);
+            background: var(--cream-light);
+        }
+        .profile-field input:focus,
+        .profile-field textarea:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
+        .profile-field textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .btn-save-profile {
+            padding: 10px 30px;
+            border-radius: 6px;
+            background: var(--green);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+        .btn-save-profile:hover {
+            background: var(--gold);
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            .account-grid {
+                grid-template-columns: 1fr;
+            }
+            .account-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .order-item {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR (same) -->
+<header class="navbar" id="navbar">  
+    <div class="navbar-inner">  
+        <a href="index.html" class="brand" aria-label="Jhunjhur Home">  
+            <img src="assets/jhunjhur-logo.png" alt="Jhunjhur logo" class="brand-logo">  
+            <span class="brand-text">  
+                <strong>Jhunjhur</strong>  
+                <small>JEWELLERY & ACCESSORIES</small>  
+            </span>  
+        </a>  
+        <nav class="nav-links" id="navLinks">  
+            <a href="index.html">Home</a>  
+            <a href="index.html#shop">Shop</a>  
+            <a href="index.html#categories">Categories</a>  
+            <a href="index.html#why-jhunjhur">Why Jhunjhur</a>  
+            <a href="about.html">About</a>  
+            <a href="faq.html">FAQ</a>  
+            <a href="index.html#contact">Contact</a>  
+            <div class="mobile-nav-actions">  
+                <button type="button" class="mobile-action-btn" id="mobileSearchBtn">  
+                    <i class="fa-solid fa-magnifying-glass"></i>  
+                    <span>Search</span>  
+                </button>  
+                <button type="button" class="mobile-action-btn" id="mobileAccountBtn">  
+                    <i class="fa-regular fa-user"></i>  
+                    <span>Account</span>  
+                </button>  
+                <button type="button" class="mobile-action-btn" id="mobileCartBtn">  
+                    <i class="fa-solid fa-bag-shopping"></i>  
+                    <span>Cart</span>  
+                    <b id="mobileCartCount">0</b>  
+                </button>  
+                <button type="button" class="mobile-action-btn" id="mobileWishlistBtn">  
+                    <i class="fa-regular fa-heart"></i>  
+                    <span>Wishlist</span>  
+                    <b id="mobileWishlistCount">0</b>  
+                </button>  
+            </div>  
+        </nav>  
+        <div class="nav-actions">  
+            <button type="button" aria-label="Search" id="searchBtn">  
+                <i class="fa-solid fa-magnifying-glass"></i>  
+            </button>  
+            <button type="button" aria-label="Account" id="accountBtn">  
+                <i class="fa-regular fa-user"></i>  
+            </button>  
+            <button type="button" class="bag-btn" id="bagBtn" aria-label="Shopping bag">  
+                <i class="fa-solid fa-bag-shopping"></i>  
+                <span class="bag-count" id="bagCount">0</span>  
+            </button>  
+        </div>  
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false">  
+            <i class="fa-solid fa-bars"></i>  
+        </button>  
+    </div>  
+</header>  
+
+<div class="mobile-overlay" id="mobileOverlay"></div>
+
+<!-- =========================================================
+     ACCOUNT CONTENT
+========================================================= -->
+
+<section class="account-page">
+    <div class="account-container">
+        
+        <!-- Header -->
+        <div class="account-header">
+            <div class="account-welcome">
+                <h1>👋 My Account</h1>
+                <p id="accountGreeting">Welcome back, User!</p>
+            </div>
+            <div class="account-actions">
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </div>
+        
+        <!-- Grid -->
+        <div class="account-grid">
+            
+            <!-- Sidebar -->
+            <aside class="account-sidebar">
+                <div class="avatar">
+                    <img src="assets/default-avatar.jpg" alt="User" id="userAvatar" onerror="this.src='https://ui-avatars.com/api/?name=User&background=a87525&color=fff'">
+                    <h4 id="userName">User</h4>
+                    <small id="userEmail">user@email.com</small>
+                </div>
+                <nav class="sidebar-menu">
+                    <button class="active" data-tab="orders">
+                        <i class="fa-solid fa-box"></i> My Orders
+                    </button>
+                    <button data-tab="reviews">
+                        <i class="fa-regular fa-star"></i> My Reviews
+                    </button>
+                    <button data-tab="wishlist">
+                        <i class="fa-regular fa-heart"></i> Wishlist
+                    </button>
+                    <button data-tab="profile">
+                        <i class="fa-regular fa-user"></i> Profile
+                    </button>
+                </nav>
+            </aside>
+            
+            <!-- Content -->
+            <div class="account-content">
+                
+                <!-- Tab: Orders -->
+                <div class="account-tab active" id="tab-orders">
+                    <h2>📦 My Orders</h2>
+                    <div id="ordersList">
+                        <!-- Orders loaded by JS -->
+                    </div>
+                </div>
+                
+                <!-- Tab: Reviews -->
+                <div class="account-tab" id="tab-reviews">
+                    <h2>⭐ My Reviews</h2>
+                    <div id="reviewsList">
+                        <!-- Reviews loaded by JS -->
+                    </div>
+                </div>
+                
+                <!-- Tab: Wishlist -->
+                <div class="account-tab" id="tab-wishlist">
+                    <h2>❤️ Wishlist</h2>
+                    <div id="wishlistList">
+                        <!-- Wishlist loaded by JS -->
+                    </div>
+                </div>
+                
+                <!-- Tab: Profile -->
+                <div class="account-tab" id="tab-profile">
+                    <h2>👤 Profile Settings</h2>
+                    <form id="profileForm">
+                        <div class="profile-field">
+                            <label>Full Name</label>
+                            <input type="text" id="profileName" placeholder="Your name">
+                        </div>
+                        <div class="profile-field">
+                            <label>Email Address</label>
+                            <input type="email" id="profileEmail" placeholder="your@email.com">
+                        </div>
+                        <div class="profile-field">
+                            <label>Phone Number</label>
+                            <input type="tel" id="profilePhone" placeholder="01XXXXXXXXX">
+                        </div>
+                        <div class="profile-field">
+                            <label>Delivery Address</label>
+                            <textarea id="profileAddress" placeholder="Your full address"></textarea>
+                        </div>
+                        <button type="submit" class="btn-save-profile">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                        </button>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+<!-- FOOTER (same) -->
+<footer class="site-footer" id="contact">
+    <div class="footer-main">
+        <div class="footer-brand">
+            <a href="index.html" class="footer-logo">
+                <img src="assets/jhunjhur-logo.png" alt="Jhunjhur">
+                <span>Jhunjhur</span>
+            </a>
+            <p>দেশি ছোঁয়ায় আপনার সাজের ছোট্ট ছোট্ট সৌন্দর্য।</p>
+            <div class="footer-socials">
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+            </div>
+        </div>
+        <div class="footer-column">
+            <h3>QUICK LINKS</h3>
+            <a href="index.html">Home</a>
+            <a href="index.html#shop">Shop</a>
+            <a href="faq.html">FAQ</a>
+            <a href="about.html">About</a>
+        </div>
+        <div class="footer-column">
+            <h3>POLICIES</h3>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms & Conditions</a>
+            <a href="shipping.html">Shipping Policy</a>
+            <a href="returns.html">Returns Policy</a>
+        </div>
+        <div class="footer-column footer-contact">
+            <h3>GET IN TOUCH</h3>
+            <a href="tel:+8801000000000"><i class="fa-solid fa-phone"></i> +880 1XXX-XXXXXX</a>
+            <a href="mailto:hello@jhunjhur.com"><i class="fa-regular fa-envelope"></i> hello@jhunjhur.com</a>
+            <span><i class="fa-solid fa-location-dot"></i> Bangladesh</span>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>© 2026 Jhunjhur. All rights reserved.</span>
+        <span>Desi. Timeless. Yours.</span>
+    </div>
+</footer>
+
+<script>
+// =========================================================
+// USER ACCOUNT JS
+// =========================================================
+
+// Get current user
+function getCurrentUser() {
+    const user = localStorage.getItem('jhunjhurUser');
+    return user ? JSON.parse(user) : null;
+}
+
+// Check if user is logged in
+function checkAuth() {
+    const user = getCurrentUser();
+    if (!user) {
+        window.location.href = 'login.html';
+        return null;
+    }
+    return user;
+}
+
+// Load user data
+function loadUserData() {
+    const user = checkAuth();
+    if (!user) return;
+    
+    document.getElementById('userName').textContent = user.name || 'User';
+    document.getElementById('userEmail').textContent = user.email || 'user@email.com';
+    document.getElementById('accountGreeting').textContent = `Welcome back, ${user.name || 'User'}!`;
+    document.getElementById('profileName').value = user.name || '';
+    document.getElementById('profileEmail').value = user.email || '';
+    document.getElementById('profilePhone').value = user.phone || '';
+    document.getElementById('profileAddress').value = user.address || '';
+}
+
+// Load orders
+function loadOrders() {
+    const container = document.getElementById('ordersList');
+    const orders = JSON.parse(localStorage.getItem('jhunjhurOrders')) || [];
+    const user = getCurrentUser();
+    
+    // Filter orders by user (if user has email/phone match)
+    const userOrders = user ? orders.filter(o => 
+        o.customer === user.name || o.phone === user.phone || o.email === user.email
+    ) : [];
+    
+    if (userOrders.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-regular fa-box"></i>
+                <h3>No orders yet</h3>
+                <p>Start shopping and your orders will appear here</p>
+                <a href="index.html#shop" class="btn-primary" style="display:inline-block; margin-top:15px; padding:10px 25px; background:var(--gold); color:white; border-radius:6px; font-size:0.7rem;">
+                    Browse Products →
+                </a>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = '';
+    userOrders.slice().reverse().forEach(order => {
+        const statusClass = order.status || 'pending';
+        const date = new Date(order.date);
+        const dateStr = date.toLocaleDateString('en-BD', { day: '2-digit', month: 'short', year: 'numeric' });
+        
+        const div = document.createElement('div');
+        div.className = 'order-item';
+        div.innerHTML = `
+            <div class="order-info">
+                <h4>#${order.id} — ${order.items?.length || 0} items</h4>
+                <small>${dateStr} • ৳${(order.total || 0).toLocaleString()}</small>
+            </div>
+            <div>
+                <span class="order-status ${statusClass}">${statusClass.charAt(0).toUpperCase() + statusClass.slice(1)}</span>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Load wishlist
+function loadWishlist() {
+    const container = document.getElementById('wishlistList');
+    const wishlist = JSON.parse(localStorage.getItem('jhunjhurWishlist')) || [];
+    const products = JSON.parse(localStorage.getItem('jhunjhurProducts')) || [];
+    
+    const wishlistProducts = products.filter(p => wishlist.includes(p.id));
+    
+    if (wishlistProducts.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-regular fa-heart"></i>
+                <h3>No favourites yet</h3>
+                <p>Save your favourite items here</p>
+                <a href="index.html#shop" class="btn-primary" style="display:inline-block; margin-top:15px; padding:10px 25px; background:var(--gold); color:white; border-radius:6px; font-size:0.7rem;">
+                    Browse Products →
+                </a>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = '';
+    wishlistProducts.forEach(product => {
+        const div = document.createElement('div');
+        div.className = 'order-item';
+        div.innerHTML = `
+            <div class="order-info">
+                <h4>${product.name}</h4>
+                <small>${product.category} • ৳${product.price.toLocaleString()}</small>
+            </div>
+            <div>
+                <button onclick="window.location.href='index.html#shop'" style="padding:6px 14px; background:var(--green); color:white; border-radius:4px; font-size:0.6rem;">
+                    <i class="fa-solid fa-bag-shopping"></i> Buy
+                </button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Load reviews (from localStorage)
+function loadReviews() {
+    const container = document.getElementById('reviewsList');
+    const user = getCurrentUser();
+    const reviews = JSON.parse(localStorage.getItem('jhunjhurReviews')) || [];
+    
+    const userReviews = user ? reviews.filter(r => r.userId === user.id) : [];
+    
+    if (userReviews.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-regular fa-star"></i>
+                <h3>No reviews yet</h3>
+                <p>Review products you've purchased</p>
+                <a href="index.html#shop" class="btn-primary" style="display:inline-block; margin-top:15px; padding:10px 25px; background:var(--gold); color:white; border-radius:6px; font-size:0.7rem;">
+                    Write a Review →
+                </a>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = '';
+    userReviews.slice().reverse().forEach(review => {
+        const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+        const div = document.createElement('div');
+        div.className = 'review-item';
+        div.innerHTML = `
+            <div class="stars">${stars}</div>
+            <strong>${review.productName}</strong>
+            <p>${review.comment}</p>
+            <small style="color:#70695d; font-size:0.6rem;">${new Date(review.date).toLocaleDateString()}</small>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Tab switching
+document.querySelectorAll('.sidebar-menu button').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-menu button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const tab = this.dataset.tab;
+        document.querySelectorAll('.account-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        
+        // Refresh content on tab switch
+        if (tab === 'orders') loadOrders();
+        if (tab === 'wishlist') loadWishlist();
+        if (tab === 'reviews') loadReviews();
+    });
+});
+
+// Profile update
+document.getElementById('profileForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const user = getCurrentUser();
+    if (!user) return;
+    
+    user.name = document.getElementById('profileName').value.trim();
+    user.email = document.getElementById('profileEmail').value.trim();
+    user.phone = document.getElementById('profilePhone').value.trim();
+    user.address = document.getElementById('profileAddress').value.trim();
+    
+    localStorage.setItem('jhunjhurUser', JSON.stringify(user));
+    alert('✅ Profile updated successfully!');
+    loadUserData();
+});
+
+// Logout
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('jhunjhurUser');
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    const user = checkAuth();
+    if (user) {
+        loadUserData();
+        loadOrders();
+        loadWishlist();
+        loadReviews();
+    }
+});
+</script>
+
+</body>
+</html>
